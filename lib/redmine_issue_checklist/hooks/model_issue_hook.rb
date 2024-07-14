@@ -30,7 +30,6 @@ module RedmineIssueChecklist
       def controller_issues_new_after_save(context={})
         if User.current.allowed_to?(:edit_checklists, context[:issue].project)
           save_checklist_to_issue(context, false)
-          context[:issue].save
         end
       end
 

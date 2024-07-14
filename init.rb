@@ -1,6 +1,6 @@
 require 'redmine'
 
-require 'redmine_issue_checklist/redmine_issue_checklist'
+Rails.application.config.autoload_paths += Dir["#{Rails.root}/plugins/redmine_issue_checklist/lib"]
 
 Redmine::Plugin.register :redmine_issue_checklist do
   name 'Redmine Issue Checklist Plugin'
@@ -21,7 +21,7 @@ Redmine::Plugin.register :redmine_issue_checklist do
     map.project_module :issue_tracking do |map|
       map.permission :view_checklists, {}
       map.permission :done_checklists, { issue_checklist: :done }
-      map.permission :edit_checklists, { issue_checklist: :delete, issue_checklist: :done }
+      map.permission :edit_checklists, { issue_checklist: [:delete, :done] }
     end
   end
 
