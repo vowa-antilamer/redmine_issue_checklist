@@ -1,6 +1,6 @@
-window.onload = function () {
-  Sortable.create('checklist_form_items', {tag: 'span'});
-};
+// window.onload = function () {
+//   Sortable.create('checklist_form_items', {tag: 'span'});
+// };
 
 var Redmine = Redmine || {};
 

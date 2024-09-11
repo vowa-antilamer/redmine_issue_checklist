@@ -1,6 +1,6 @@
-window.onload = function() {
-  $('#checklist_form_items').sortable();
-};
+// window.onload = function() {
+//   $('#checklist_form_items').sortable();
+// };
 
 var Redmine = Redmine || {};
 
@@ -60,7 +60,6 @@ Redmine.IssueChecklist = jQuery.klass({
     button.click($.proxy(function(){
       this.checklist[сhecklistItem] = null;
       label.remove();
-      // Event.stop(event);
     }, this));
 
     checkbox.click($.proxy(function(){
@@ -68,9 +67,8 @@ Redmine.IssueChecklist = jQuery.klass({
         label.addClass('is-done-checklist-item');
       } else {
         label.removeClass('is-done-checklist-item');
-      };
+      }
     }, this));
-
   },
 
   addChecklist: function(checklist) {
@@ -133,20 +131,59 @@ Redmine.IssueChecklist = jQuery.klass({
   }
 });
 
+Redmine.ChecklistToggle = jQuery.klass({
+  manageToggling: function (t_val) {
+    const checkedCheckboxes = $('.is-done-checklist-item:not(#checklist_form_items .is-done-checklist-item)');
+    const listItems = checkedCheckboxes.closest('li');
+
+    if(localStorage.getItem("hide_closed_checklists") === t_val) {
+      listItems.show();
+      $(this.switch_link).text(this.hide_text);
+    } else {
+      listItems.hide();
+      $(this.switch_link).text(`${this.show_text} (${checkedCheckboxes.length})`);
+    }
+  },
+
+  switch_link_click: function() {
+    var th = this;
+    this.switch_link.click(function (e) {
+      e.preventDefault();
+      th.manageToggling("1");
+      var setVal = (localStorage.getItem("hide_closed_checklists") === "0") ? "1" : "0";
+      localStorage.setItem("hide_closed_checklists", setVal);
+    });
+  },
+
+
+  init: function(show_text, hide_text) {
+    this.show_text = show_text;
+    this.hide_text = hide_text;
+    this.switch_link = $('#switch_link');
+    // Устанавливаем значение по умолчанию, если его нет в localStorage
+    if (!localStorage.getItem("hide_closed_checklists")) {
+      localStorage.setItem("hide_closed_checklists", "1");
+    }
+    this.manageToggling("0");
+    this.switch_link_click();
+  }
+});
+
 function observeIssueChecklistField(element, input, add_button, fileInput) {
-  issueChecklist = new Redmine.IssueChecklist(element, input,
-                                              add_button, fileInput);
+  issueChecklist = new Redmine.IssueChecklist(element, input, add_button, fileInput);
 }
 
 function createIssueChecklist(checkList) {
   issueChecklist.addChecklist(checkList);
 }
 
-function checklist_item_done(elem,url,id){
-  $.ajax({url: url,
-          dataType: 'script',
-          data: 'checklist_item_' + id});
-  var checkbox = $('#checklist_item_checkbox_'+id);
+function checklist_item_done(elem, url, id) {
+  $.ajax({
+    url: url,
+    dataType: 'script',
+    data: 'checklist_item_' + id
+  });
+  var checkbox = $('#checklist_item_checkbox_' + id);
   if (checkbox.is(':checked')) {
     checkbox.removeAttr('checked');
   } else {

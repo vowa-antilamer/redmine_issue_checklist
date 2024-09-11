@@ -6,7 +6,6 @@ div#issue_checklist ul {
 }
 
 div#issue_checklist li {
-  padding-bottom: 10px;
   margin-left: 10px;
 }
 
@@ -29,7 +28,6 @@ input#checklist_item {
 
 span.checklist-item {
   display: block;
-  margin-bottom: 5px;
 }
 
 span.checklist-item.is-done-checklist-item, #issue_checklist_items li.is-done-checklist-item {

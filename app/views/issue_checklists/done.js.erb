@@ -1,1 +1,21 @@
-$("#checklist_item_<%= @checklist_item.id %>").toggleClass('is-done-checklist-item')
+// Переключаем класс для текущего элемента чек-листа
+$("#checklist_item_<%= @checklist_item.id %>").toggleClass('is-done-checklist-item');
+
+// Триггерим клики на чекбоксах
+$('#checklist_form .checklist-item#<%= @checklist_item.id %> input[type=checkbox]').trigger('click');
+
+// Обновляем прогресс-бар
+$('.issue .attributes table.progress').parent().html('<%= j(progress_bar(@checklist_item.issue.done_ratio, :width => '80px', :legend => "#{@checklist_item.issue.done_ratio}%")) %>');
+$('#issue_done_ratio').val('<%= @checklist_item.issue.done_ratio %>');
+
+// Ищем все чекбоксы с галочкой, исключая элементы внутри #checklist_form_items
+var checkedCheckboxes = $('.is-done-checklist-item:not(#checklist_form_items .is-done-checklist-item)');
+
+// Проверяем, скрывать ли завершенные элементы на основе значения в localStorage
+if(localStorage.getItem("hide_closed_checklists") === '1' && checkedCheckboxes.length > 0){
+  // Если чек-листы завершены, скрываем элемент с анимацией
+  $("#checklist_item_<%= @checklist_item.id %>").fadeOut(1000).hide(1);
+  
+  // Обновляем текст ссылки для переключения
+  $('#switch_link').text('<%= l("label_checklist_show_closed") %>' + '(' + checkedCheckboxes.length + ')');
+}
